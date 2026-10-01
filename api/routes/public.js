@@ -4,11 +4,11 @@
 const express = require('express');
 const router = express.Router();
 const supabase = require('../lib/supabase');
-const { getData } = require('../lib/store');
+const { getData, getLatestData } = require('../lib/store');
 
 // GET /api/data - Full live event state (students, photos, schedule, fees, etc.)
-router.get('/data', (req, res) => {
-  const d = getData();
+router.get('/data', async (req, res) => {
+  const d = await getLatestData();
   if (d) return res.json(d);
   res.status(500).json({ error: 'Data not available' });
 });
