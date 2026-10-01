@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en" style="color-scheme: dark;"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>GPDTS 2026 Poipet</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Figtree:wght@400;500;700&family=Noto+Sans+Khmer:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+--bg:#eef3ee;--sf:#fff;--ink:#10231f;--mute:#586c65;--line:#d5e0d9;--brass:#8f6212;--jade:#2f7a63;--bar:#0e1f1c;--barink:#e9f1ec;--gold:#e0ad55}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0b1a17;--sf:#132925;--ink:#eaf1ec;--mute:#9db3aa;--line:#24413a;--brass:#e0ad55;--jade:#7fc9ac}}
+:root[data-theme="dark"]{--bg:#0b1a17;--sf:#132925;--ink:#eaf1ec;--mute:#9db3aa;--line:#24413a;--brass:#e0ad55;--jade:#7fc9ac}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 16px/1.55 'Figtree',system-ui,sans-serif;padding-bottom:84px}
+h1,h2,h3,.top b,.wn{font-family:'Bricolage Grotesque','Figtree',system-ui,sans-serif;margin:0;line-height:1.1}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bar);color:var(--barink);display:flex;align-items:center;gap:8px;padding:10px 16px}
+.top b{font-size:1.1rem}.top img{width:28px;height:28px}.sp{flex:1}
+.pill{border:1px solid rgba(233,241,236,.4);background:none;color:var(--barink);border-radius:99px;padding:6px 14px;font-weight:700;font-size:.85rem}
+.pill.on{background:var(--gold);color:#1a1200;border-color:var(--gold)}
+main{max-width:1000px;margin:0 auto;padding:20px 16px}
+.hero h1{font-size:clamp(3.6rem,18vw,8rem);font-weight:800;color:var(--brass);letter-spacing:-.04em}
+.lede{max-width:32em;font-size:1.15rem;margin:12px 0 0}
+.mute,.where{color:var(--mute)}.where{margin:6px 0 0;font-weight:500}
+.faces{display:flex;margin:26px 0 6px;padding-left:12px}
+.faces img{width:clamp(38px,9vw,64px);height:clamp(38px,9vw,64px);border-radius:50%;object-fit:cover;border:3px solid var(--bg);margin-left:-12px}
+.nums{display:flex;gap:26px;margin:14px 0 26px;color:var(--mute)}.nums b{font-size:1.25rem;color:var(--jade)}
+.grid{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr))}
+.box{background:var(--sf);border:1px solid var(--line);border-radius:16px;padding:20px}
+.box h2{font-size:1.4rem;margin-bottom:10px}
+.pray{border-left:6px solid var(--gold)}
+.who{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.chip{border:1px solid var(--brass);color:var(--brass);background:none;border-radius:99px;padding:6px 14px;font-weight:700;display:inline-block}
+.pil{padding:12px 0;border-top:1px solid var(--line)}.pil:first-of-type{border:0;padding-top:0}
+.pil h3,.sub{font-size:1.05rem;color:var(--jade)}.sub{margin:16px 0 4px}.pil p{margin:4px 0 0}
+.ck{list-style:none;padding:0;margin:0}.ck li{padding:8px 0 8px 26px;border-top:1px solid var(--line);position:relative}
+.ck li::before{content:"✓";position:absolute;left:0;color:var(--brass);font-weight:700}
+.people{display:grid;gap:14px;grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}
+.card{background:var(--sf);border:1px solid var(--line);border-radius:16px;overflow:hidden;text-align:left;padding:0;display:block;width:100%}
+.card img{width:100%;aspect-ratio:1/1.1;object-fit:cover;display:block}.card>div{padding:10px 12px 14px}
+.round .card{text-align:center}.round .card img{width:112px;height:112px;aspect-ratio:auto;border-radius:50%;margin:16px auto 0;border:3px solid var(--gold)}
+.tabs{position:fixed;left:0;right:0;bottom:0;z-index:6;display:flex;justify-content:space-around;background:var(--bar);color:var(--barink);padding:8px 6px calc(8px + env(safe-area-inset-bottom,0px))}
+.tab{background:none;border:0;opacity:.6;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:.66rem;padding:4px 2px;flex:1;min-width:0}
+.tab.on{opacity:1;color:var(--gold)}.tab svg{width:22px;height:22px}
+@media(min-width:820px){.tabs{position:static;justify-content:center;gap:8px;padding:8px}.tab{flex-direction:row;font-size:.95rem;gap:8px;padding:8px 18px;border-radius:99px;flex:none}.tab.on{background:rgba(224,173,85,.15)}body{padding-bottom:24px}}
+.ov{position:fixed;inset:0;background:rgba(5,12,10,.6);display:flex;align-items:flex-end;justify-content:center;z-index:20}
+.sh{background:var(--sf);width:100%;max-width:440px;border-radius:22px 22px 0 0;padding:24px 22px calc(28px + env(safe-area-inset-bottom,0px));text-align:center}
+@media(min-width:820px){.ov{align-items:center}.sh{border-radius:22px}}
+.sh img{width:132px;height:132px;border-radius:50%;object-fit:cover;border:3px solid var(--gold)}.sh h2{margin:12px 0 4px}.sh p{margin:2px 0 12px}
+.loading{display:flex;align-items:center;justify-content:center;min-height:60vh;font-size:1.2rem;color:var(--mute)}
+</style>
+</head>
+<body>
+<div id="app"><div class="loading">Loading…</div></div>
+
+<script>
+// ── Config ─────────────────────────────────────────────────
+const API = '/api';
+
+// ── State ──────────────────────────────────────────────────
+let D = null; // event data from API
+let activeTab = 'home';
+let sheet = null;
+
+// ── Fetch event data ───────────────────────────────────────
+async function loadData() {
+  try {
+    const res = await fetch(`${API}/event`);
+    if (!res.ok) throw new Error('Network error');
+    D = await res.json();
+    render();
+  } catch(e) {
+    document.getElementById('app').innerHTML =
+      `<div class="loading">Failed to load data. Please try again.</div>`;
+  }
+}
+
+// ── Tab navigation ─────────────────────────────────────────
+function showTab(id) {
+  activeTab = id;
+  render();
+}
+
+// ── Student sheet ──────────────────────────────────────────
+function openSheet(student) {
+  sheet = student;
+  render();
+}
+function closeSheet() {
+  sheet = null;
+  render();
+}
+
+// ── Render ─────────────────────────────────────────────────
+function render() {
+  if (!D) return;
+  const prayStudents = D.students.filter(s => s.pray);
+
+  const tabs = [
+    { id:'home',    label:'Home',    icon:'<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>' },
+    { id:'people',  label:'People',  icon:'<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>' },
+    { id:'goals',   label:'Goals',   icon:'<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>' },
+    { id:'pray',    label:'Prayer',  icon:'<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>' },
+  ];
+
+  const tabBar = `<nav class="tabs">${tabs.map(t=>`
+    <button class="tab${activeTab===t.id?' on':''}" onclick="showTab('${t.id}')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">${t.icon}</svg>
+      ${t.label}
+    </button>`).join('')}</nav>`;
+
+  let content = '';
+
+  if (activeTab === 'home') {
+    content = `
+      <div class="hero"><h1>${D.meta.title}</h1></div>
+      <p class="where">${D.meta.kicker}</p>
+      <p class="lede">${D.meta.lede}</p>
+      <div class="faces">${D.students.slice(0,8).map(s=>
+        `<img src="${s.photo || 'https://ui-avatars.com/api/?name='+encodeURIComponent(s.name)+'&background=2f7a63&color=fff'}" alt="${s.name}" loading="lazy">`
+      ).join('')}</div>
+      <div class="nums">
+        <div><b>${D.students.length}</b><br>students</div>
+        <div><b>${prayStudents.length}</b><br>need prayer</div>
+        <div><b>${D.goals.outreach.length + D.goals.classroom.length}</b><br>goals</div>
+      </div>
+      <div class="grid">
+        <div class="box pray">
+          <h2>🙏 ${D.pray.title}</h2>
+          <p>${D.pray.text}</p>
+          <div class="who">${prayStudents.map(s=>
+            `<span class="chip">${s.nick || s.name}</span>`
+          ).join('')}</div>
+        </div>
+        <div class="box">
+          <h2>Three Pillars</h2>
+          ${D.pillars.map(p=>`
+            <div class="pil"><h3>${p.h}</h3><p>${p.p}</p></div>
+          `).join('')}
+        </div>
+      </div>`;
+  }
+
+  if (activeTab === 'people') {
+    content = `
+      <h2 style="margin-bottom:16px">Students</h2>
+      <div class="people round">${D.students.map(s=>`
+        <button class="card" onclick='openSheet(${JSON.stringify(s)})'>
+          <img src="${s.photo || 'https://ui-avatars.com/api/?name='+encodeURIComponent(s.name)+'&size=200&background=2f7a63&color=fff'}" alt="${s.name}" loading="lazy">
+          <div>
+            <strong>${s.nick || s.name.split(' ')[0]}</strong><br>
+            <span class="mute" style="font-size:.85rem">${s.from || ''}</span>
+            ${s.pray ? ' 🙏' : ''}
+          </div>
+        </button>`).join('')}
+      </div>`;
+  }
+
+  if (activeTab === 'goals') {
+    content = `
+      <div class="grid">
+        <div class="box">
+          <h2>🌏 Outreach Goals</h2>
+          <ul class="ck">${D.goals.outreach.map(g=>`<li>${g}</li>`).join('')}</ul>
+        </div>
+        <div class="box">
+          <h2>📚 Classroom Goals</h2>
+          <ul class="ck">${D.goals.classroom.map(g=>`<li>${g}</li>`).join('')}</ul>
+        </div>
+      </div>`;
+  }
+
+  if (activeTab === 'pray') {
+    content = `
+      <div class="box pray" style="margin-bottom:16px">
+        <h2>🙏 ${D.pray.title}</h2>
+        <p>${D.pray.text}</p>
+      </div>
+      <div class="people round">${prayStudents.map(s=>`
+        <button class="card" onclick='openSheet(${JSON.stringify(s)})'>
+          <img src="${s.photo || 'https://ui-avatars.com/api/?name='+encodeURIComponent(s.name)+'&size=200&background=8f6212&color=fff'}" alt="${s.name}" loading="lazy">
+          <div>
+            <strong>${s.nick || s.name.split(' ')[0]}</strong><br>
+            <span class="mute" style="font-size:.85rem">${s.from || ''}</span>
+          </div>
+        </button>`).join('')}
+      </div>`;
+  }
+
+  // Sheet overlay
+  const sheetHtml = sheet ? `
+    <div class="ov" onclick="closeSheet()">
+      <div class="sh" onclick="event.stopPropagation()">
+        <img src="${sheet.photo || 'https://ui-avatars.com/api/?name='+encodeURIComponent(sheet.name)+'&size=200&background=2f7a63&color=fff'}" alt="${sheet.name}">
+        <h2>${sheet.name}</h2>
+        <p class="mute">${sheet.from || ''}</p>
+        ${sheet.born ? `<p class="mute" style="font-size:.85rem">Born ${new Date(sheet.born).toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'})}</p>` : ''}
+        ${sheet.pray ? `<p>🙏 <strong>Needs prayer to know God</strong></p>` : ''}
+        <button class="pill" onclick="closeSheet()">Close</button>
+      </div>
+    </div>` : '';
+
+  document.getElementById('app').innerHTML = `
+    <div class="top">
+      <b>${D.meta.brand}</b>
+      <span class="sp"></span>
+    </div>
+    ${tabBar}
+    <main>${content}</main>
+    ${sheetHtml}`;
+}
+
+// ── Boot ───────────────────────────────────────────────────
+loadData();
+</script>
+</body>
+</html>

@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GPDTS Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font:400 15px/1.5 'Figtree',system-ui,sans-serif;background:#0b1a17;color:#eaf1ec;min-height:100vh}
+.bar{background:#0e1f1c;padding:12px 20px;display:flex;align-items:center;gap:12px;border-bottom:1px solid #24413a}
+.bar h1{font-size:1.1rem;color:#e0ad55}
+.bar .sp{flex:1}
+.btn{border:0;border-radius:8px;padding:8px 16px;font:700 .85rem 'Figtree',sans-serif;cursor:pointer}
+.btn-gold{background:#e0ad55;color:#1a1200}
+.btn-jade{background:#2f7a63;color:#fff}
+.btn-danger{background:#7c1c1c;color:#fff}
+.btn-ghost{background:none;border:1px solid #24413a;color:#9db3aa}
+.main{max-width:900px;margin:0 auto;padding:24px 16px}
+.login-wrap{display:flex;align-items:center;justify-content:center;min-height:80vh}
+.card{background:#132925;border:1px solid #24413a;border-radius:16px;padding:24px}
+.card h2{margin-bottom:16px;color:#e0ad55}
+label{display:block;font-size:.85rem;color:#9db3aa;margin-bottom:4px;margin-top:12px}
+input,textarea,select{width:100%;background:#0b1a17;border:1px solid #24413a;color:#eaf1ec;border-radius:8px;padding:8px 12px;font:inherit;font-size:.9rem}
+input:focus,textarea:focus{outline:2px solid #e0ad55;border-color:#e0ad55}
+.tabs{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap}
+.tab{border:1px solid #24413a;background:none;color:#9db3aa;border-radius:99px;padding:6px 16px;font:600 .85rem 'Figtree',sans-serif;cursor:pointer}
+.tab.on{background:#e0ad55;color:#1a1200;border-color:#e0ad55}
+table{width:100%;border-collapse:collapse;background:#132925;border-radius:12px;overflow:hidden}
+th{background:#0e1f1c;color:#9db3aa;font-size:.8rem;text-transform:uppercase;letter-spacing:.05em;padding:10px 12px;text-align:left}
+td{padding:10px 12px;border-top:1px solid #24413a;font-size:.9rem;vertical-align:middle}
+.badge{display:inline-block;padding:3px 10px;border-radius:99px;font-size:.75rem;font-weight:700}
+.badge-pray{background:#8f6212;color:#fff}
+.badge-ok{background:#2f7a63;color:#fff}
+.modal-bg{position:fixed;inset:0;background:rgba(5,12,10,.7);z-index:10;display:flex;align-items:center;justify-content:center;padding:16px}
+.modal{background:#132925;border:1px solid #24413a;border-radius:16px;padding:24px;width:100%;max-width:480px;max-height:90vh;overflow-y:auto}
+.modal h3{margin-bottom:12px;color:#e0ad55}
+.row{display:flex;gap:8px;align-items:center;margin-top:8px}
+.err{color:#f87171;font-size:.85rem;margin-top:6px}
+.success{color:#4ade80;font-size:.85rem;margin-top:6px}
+.hidden{display:none}
+</style>
+</head>
+<body>
+
+<div id="root"></div>
+
+<script>
+const API = '/api';
+let token = localStorage.getItem('gpdts_token');
+let adminUser = localStorage.getItem('gpdts_user');
+let view = 'students';
+let data = null;
+let modal = null;
+let msg = '';
+let msgType = 'success';
+
+// ── Auth ───────────────────────────────────────────────────
+async function login(username, password) {
+  const res = await fetch(`${API}/admin/login`, {
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({username, password})
+  });
+  const j = await res.json();
+  if (!res.ok) throw new Error(j.error || 'Login failed');
+  token = j.token;
+  adminUser = j.username;
+  localStorage.setItem('gpdts_token', token);
+  localStorage.setItem('gpdts_user', adminUser);
+  await loadData();
+  render();
+}
+
+function logout() {
+  token = null; adminUser = null; data = null;
+  localStorage.removeItem('gpdts_token');
+  localStorage.removeItem('gpdts_user');
+  render();
+}
+
+// ── API helpers ────────────────────────────────────────────
+async function api(method, path, body) {
+  const res = await fetch(`${API}/admin${path}`, {
+    method,
+    headers:{'Content-Type':'application/json','Authorization':`Bearer ${token}`},
+    body: body ? JSON.stringify(body) : undefined
+  });
+  const j = await res.json();
+  if (!res.ok) throw new Error(j.error || 'Request failed');
+  return j;
+}
+
+async function loadData() {
+  const [event, students] = await Promise.all([
+    fetch(`${API}/event`).then(r=>r.json()),
+    api('GET','/students')
+  ]);
+  data = { event, students };
+}
+
+// ── Student CRUD ───────────────────────────────────────────
+async function saveStudent(form) {
+  const payload = {
+    name: form.name.value.trim(),
+    nick: form.nick.value.trim() || null,
+    from_location: form.from_location.value.trim(),
+    born: form.born.value || null,
+    gender: form.gender.value,
+    pray: form.pray.checked,
+    sort_order: parseInt(form.sort_order.value) || 0
+  };
+  try {
+    if (form.dataset.id) {
+      await api('PUT', `/students/${form.dataset.id}`, payload);
+    } else {
+      await api('POST', '/students', payload);
+    }
+    modal = null;
+    msg = 'Student saved!'; msgType = 'success';
+    await loadData(); render();
+  } catch(e) {
+    msg = e.message; msgType = 'err';
+    render();
+  }
+}
+
+async function deleteStudent(id, name) {
+  if (!confirm(`Delete ${name}?`)) return;
+  try {
+    await api('DELETE', `/students/${id}`);
+    msg = 'Deleted.'; msgType = 'success';
+    await loadData(); render();
+  } catch(e) {
+    msg = e.message; msgType = 'err'; render();
+  }
+}
+
+// ── Goals CRUD ─────────────────────────────────────────────
+async function saveGoals(form) {
+  const outreach = form.outreach.value.trim().split('\n').filter(Boolean);
+  const classroom = form.classroom.value.trim().split('\n').filter(Boolean);
+  try {
+    await api('PUT', '/goals', { outreach, classroom });
+    msg = 'Goals updated!'; msgType = 'success';
+    await loadData(); render();
+  } catch(e) {
+    msg = e.message; msgType = 'err'; render();
+  }
+}
+
+// ── Render ─────────────────────────────────────────────────
+function render() {
+  document.getElementById('root').innerHTML = token ? renderApp() : renderLogin();
+
+  // Attach form handlers
+  const lf = document.getElementById('login-form');
+  if (lf) lf.onsubmit = async e => {
+    e.preventDefault();
+    const u = document.getElementById('username').value;
+    const p = document.getElementById('password').value;
+    const errEl = document.getElementById('login-err');
+    try { await login(u, p); } catch(e2) { errEl.textContent = e2.message; }
+  };
+
+  const sf = document.getElementById('student-form');
+  if (sf) sf.onsubmit = e => { e.preventDefault(); saveStudent(sf); };
+
+  const gf = document.getElementById('goals-form');
+  if (gf) gf.onsubmit = e => { e.preventDefault(); saveGoals(gf); };
+}
+
+function renderLogin() {
+  return `
+    <div class="login-wrap">
+      <div class="card" style="width:100%;max-width:360px">
+        <h2>🔐 GPDTS Admin</h2>
+        <form id="login-form">
+          <label>Username</label>
+          <input id="username" type="text" autocomplete="username" required>
+          <label>Password</label>
+          <input id="password" type="password" autocomplete="current-password" required>
+          <div id="login-err" class="err"></div>
+          <button class="btn btn-gold" style="width:100%;margin-top:16px">Sign In</button>
+        </form>
+      </div>
+    </div>`;
+}
+
+function renderApp() {
+  if (!data) return '<div style="padding:40px;text-align:center;color:#9db3aa">Loading…</div>';
+  const { event, students } = data;
+
+  const tabs = [
+    { id:'students', label:'Students' },
+    { id:'goals',    label:'Goals' },
+    { id:'event',    label:'Event Info' },
+  ];
+
+  const msgHtml = msg ? `<p class="${msgType}" style="margin-bottom:12px">${msg}</p>` : '';
+
+  let content = '';
+
+  if (view === 'students') {
+    content = `
+      ${msgHtml}
+      <div style="display:flex;justify-content:flex-end;margin-bottom:12px">
+        <button class="btn btn-jade" onclick="modal='new';msg='';render()">+ Add Student</button>
+      </div>
+      <table>
+        <thead><tr><th>Name</th><th>From</th><th>Gender</th><th>Born</th><th>Prayer</th><th>Actions</th></tr></thead>
+        <tbody>
+          ${students.map(s=>`<tr>
+            <td><strong>${s.name}</strong>${s.nick?` <span style="color:#9db3aa;font-size:.8rem">(${s.nick})</span>`:''}</td>
+            <td>${s.from_location||'—'}</td>
+            <td>${s.gender||'—'}</td>
+            <td>${s.born ? new Date(s.born).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) : '—'}</td>
+            <td><span class="badge ${s.pray?'badge-pray':'badge-ok'}">${s.pray?'🙏 Needs prayer':'✓ Saved'}</span></td>
+            <td>
+              <button class="btn btn-ghost" style="font-size:.8rem;padding:4px 10px;margin-right:4px" onclick='modal=${JSON.stringify(s)};msg="";render()'>Edit</button>
+              <button class="btn btn-danger" style="font-size:.8rem;padding:4px 10px" onclick="deleteStudent(${s.id},'${s.name.replace(/'/g,"\\'")}')">Delete</button>
+            </td>
+          </tr>`).join('')}
+        </tbody>
+      </table>
+      ${renderStudentModal()}`;
+  }
+
+  if (view === 'goals') {
+    const g = event.goals;
+    content = `
+      ${msgHtml}
+      <div class="card">
+        <h2>Edit Goals</h2>
+        <form id="goals-form">
+          <label>Outreach Goals (one per line)</label>
+          <textarea name="outreach" rows="6">${g.outreach.join('\n')}</textarea>
+          <label>Classroom Goals (one per line)</label>
+          <textarea name="classroom" rows="5">${g.classroom.join('\n')}</textarea>
+          <button class="btn btn-gold" style="margin-top:16px">Save Goals</button>
+        </form>
+      </div>`;
+  }
+
+  if (view === 'event') {
+    const m = event.meta;
+    const p = event.pray;
+    content = `
+      ${msgHtml}
+      <div class="card">
+        <h2>Event Info</h2>
+        <p style="color:#9db3aa;font-size:.9rem">Coming soon — edit event metadata here.</p>
+        <div style="margin-top:16px;padding:12px;border:1px solid #24413a;border-radius:8px">
+          <p><strong>Brand:</strong> ${m.brand}</p>
+          <p><strong>Kicker:</strong> ${m.kicker}</p>
+          <p><strong>Lede:</strong> ${m.lede}</p>
+          <p style="margin-top:8px"><strong>Prayer focus:</strong> ${p.title}</p>
+        </div>
+      </div>`;
+  }
+
+  return `
+    <div class="bar">
+      <h1>GPDTS Admin</h1>
+      <span class="sp"></span>
+      <span style="color:#9db3aa;font-size:.85rem;margin-right:8px">${adminUser}</span>
+      <button class="btn btn-ghost" onclick="logout()">Sign out</button>
+    </div>
+    <div class="main">
+      <div class="tabs">${tabs.map(t=>`
+        <button class="tab${view===t.id?' on':''}" onclick="view='${t.id}';msg='';render()">${t.label}</button>`).join('')}
+        <a href="/" target="_blank" class="tab" style="text-decoration:none">↗ View Site</a>
+      </div>
+      ${content}
+    </div>`;
+}
+
+function renderStudentModal() {
+  if (!modal) return '';
+  const isNew = modal === 'new';
+  const s = isNew ? {} : modal;
+  return `
+    <div class="modal-bg" onclick="modal=null;render()">
+      <div class="modal" onclick="event.stopPropagation()">
+        <h3>${isNew ? 'Add Student' : 'Edit Student'}</h3>
+        <form id="student-form" ${isNew ? '' : `data-id="${s.id}"`}>
+          <label>Full Name *</label>
+          <input name="name" value="${s.name||''}" required>
+          <label>Nickname</label>
+          <input name="nick" value="${s.nick||''}">
+          <label>From (location)</label>
+          <input name="from_location" value="${s.from_location||''}">
+          <label>Date of Birth</label>
+          <input name="born" type="date" value="${s.born ? s.born.slice(0,10) : ''}">
+          <label>Gender</label>
+          <select name="gender">
+            <option ${s.gender==='Male'?'selected':''}>Male</option>
+            <option ${s.gender==='Female'?'selected':''}>Female</option>
+          </select>
+          <label>Sort Order</label>
+          <input name="sort_order" type="number" value="${s.sort_order||0}">
+          <div class="row">
+            <input name="pray" type="checkbox" style="width:auto" ${s.pray?'checked':''}>
+            <label style="margin:0">Needs prayer to know God</label>
+          </div>
+          <div style="display:flex;gap:8px;margin-top:16px">
+            <button class="btn btn-gold" type="submit">${isNew?'Add':'Save'}</button>
+            <button class="btn btn-ghost" type="button" onclick="modal=null;render()">Cancel</button>
+          </div>
+        </form>
+      </div>
+    </div>`;
+}
+
+// ── Boot ───────────────────────────────────────────────────
+async function boot() {
+  if (token) {
+    try { await loadData(); } catch(e) { logout(); }
+  }
+  render();
+}
+boot();
+</script>
+</body>
+</html>
