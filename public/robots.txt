@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://chhanun.site/sitemap.xml
+Sitemap: https://gpdts2026.chhanun.site/sitemap.xml
