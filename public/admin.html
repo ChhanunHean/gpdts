@@ -2,43 +2,72 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>GPDTS Admin</title>
-<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Figtree:wght@400;500;700&family=Noto+Sans+Khmer:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
-body{font:400 15px/1.5 'Figtree',system-ui,sans-serif;background:#0b1a17;color:#eaf1ec;min-height:100vh}
-.bar{background:#0e1f1c;padding:12px 20px;display:flex;align-items:center;gap:12px;border-bottom:1px solid #24413a}
-.bar h1{font-size:1.1rem;color:#e0ad55}
+:root {
+  box-sizing: border-box;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  --bg: #eef3ee;
+  --sf: #fff;
+  --ink: #10231f;
+  --mute: #586c65;
+  --line: #d5e0d9;
+  --brass: #8f6212;
+  --jade: #2f7a63;
+  --bar: #0e1f1c;
+  --barink: #e9f1ec;
+  --gold: #e0ad55;
+}
+@media(prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#0b1a17;--sf:#132925;--ink:#eaf1ec;--mute:#9db3aa;--line:#24413a;--brass:#e0ad55;--jade:#7fc9ac;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0b1a17;--sf:#132925;--ink:#eaf1ec;--mute:#9db3aa;--line:#24413a;--brass:#e0ad55;--jade:#7fc9ac;
+}
+:root[data-theme="light"]{
+  --bg:#eef3ee;--sf:#fff;--ink:#10231f;--mute:#586c65;--line:#d5e0d9;--brass:#8f6212;--jade:#2f7a63;--bar:#0e1f1c;--barink:#e9f1ec;--gold:#e0ad55;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;margin:0;padding:0}
+body{font:400 15px/1.55 'Figtree',system-ui,sans-serif;background:var(--bg);color:var(--ink);min-height:100vh}
+h1,h2,h3,.bar h1{font-family:'Bricolage Grotesque','Figtree',system-ui,sans-serif;margin:0;line-height:1.15;color:var(--brass)}
+.bar{background:var(--bar);color:var(--barink);padding:12px 20px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:10}
+.bar h1{font-size:1.15rem;color:var(--gold)}
 .bar .sp{flex:1}
-.btn{border:0;border-radius:8px;padding:8px 16px;font:700 .85rem 'Figtree',sans-serif;cursor:pointer}
-.btn-gold{background:#e0ad55;color:#1a1200}
-.btn-jade{background:#2f7a63;color:#fff}
-.btn-danger{background:#7c1c1c;color:#fff}
-.btn-ghost{background:none;border:1px solid #24413a;color:#9db3aa}
-.main{max-width:900px;margin:0 auto;padding:24px 16px}
+.btn{border:0;border-radius:99px;padding:8px 18px;font:700 .85rem 'Figtree',sans-serif;cursor:pointer;transition:transform .1s,opacity .15s}
+.btn:active{transform:scale(.97)}
+.btn-gold{background:var(--gold);color:#1a1200}
+.btn-jade{background:var(--jade);color:#fff}
+.btn-danger{background:#dc2626;color:#fff}
+.btn-ghost{background:none;border:1px solid var(--line);color:var(--mute)}
+.btn-pill{border:1px solid rgba(233,241,236,.4);background:none;color:var(--barink);border-radius:99px;padding:5px 14px;font-weight:700;font-size:.8rem}
+.main{max-width:960px;margin:0 auto;padding:24px 16px}
 .login-wrap{display:flex;align-items:center;justify-content:center;min-height:80vh}
-.card{background:#132925;border:1px solid #24413a;border-radius:16px;padding:24px}
-.card h2{margin-bottom:16px;color:#e0ad55}
-label{display:block;font-size:.85rem;color:#9db3aa;margin-bottom:4px;margin-top:12px}
-input,textarea,select{width:100%;background:#0b1a17;border:1px solid #24413a;color:#eaf1ec;border-radius:8px;padding:8px 12px;font:inherit;font-size:.9rem}
-input:focus,textarea:focus{outline:2px solid #e0ad55;border-color:#e0ad55}
-.tabs{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap}
-.tab{border:1px solid #24413a;background:none;color:#9db3aa;border-radius:99px;padding:6px 16px;font:600 .85rem 'Figtree',sans-serif;cursor:pointer}
-.tab.on{background:#e0ad55;color:#1a1200;border-color:#e0ad55}
-table{width:100%;border-collapse:collapse;background:#132925;border-radius:12px;overflow:hidden}
-th{background:#0e1f1c;color:#9db3aa;font-size:.8rem;text-transform:uppercase;letter-spacing:.05em;padding:10px 12px;text-align:left}
-td{padding:10px 12px;border-top:1px solid #24413a;font-size:.9rem;vertical-align:middle}
-.badge{display:inline-block;padding:3px 10px;border-radius:99px;font-size:.75rem;font-weight:700}
-.badge-pray{background:#8f6212;color:#fff}
-.badge-ok{background:#2f7a63;color:#fff}
-.modal-bg{position:fixed;inset:0;background:rgba(5,12,10,.7);z-index:10;display:flex;align-items:center;justify-content:center;padding:16px}
-.modal{background:#132925;border:1px solid #24413a;border-radius:16px;padding:24px;width:100%;max-width:480px;max-height:90vh;overflow-y:auto}
-.modal h3{margin-bottom:12px;color:#e0ad55}
-.row{display:flex;gap:8px;align-items:center;margin-top:8px}
-.err{color:#f87171;font-size:.85rem;margin-top:6px}
-.success{color:#4ade80;font-size:.85rem;margin-top:6px}
-.hidden{display:none}
+.card{background:var(--sf);border:1px solid var(--line);border-radius:16px;padding:24px;box-shadow:0 4px 20px rgba(0,0,0,.04)}
+.card h2{margin-bottom:16px;font-size:1.3rem}
+label{display:block;font-size:.85rem;color:var(--mute);margin-bottom:5px;margin-top:14px;font-weight:600}
+input,textarea,select{width:100%;background:var(--bg);border:1px solid var(--line);color:var(--ink);border-radius:10px;padding:10px 14px;font:inherit;font-size:.9rem}
+input:focus,textarea:focus,select:focus{outline:2px solid var(--gold);border-color:var(--gold);background:color-mix(in srgb, var(--gold) 6%, var(--bg))}
+.tabs{display:flex;gap:8px;margin-bottom:24px;flex-wrap:wrap}
+.tab{border:1px solid var(--line);background:var(--sf);color:var(--mute);border-radius:99px;padding:8px 18px;font:600 .88rem 'Figtree',sans-serif;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:6px}
+.tab.on{background:var(--gold);color:#1a1200;border-color:var(--gold);font-weight:700}
+table{width:100%;border-collapse:collapse;background:var(--sf);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+th{background:var(--bar);color:var(--barink);font-size:.8rem;text-transform:uppercase;letter-spacing:.05em;padding:12px 14px;text-align:left;font-weight:700}
+td{padding:12px 14px;border-top:1px solid var(--line);font-size:.9rem;vertical-align:middle}
+tr:hover td{background:color-mix(in srgb, var(--jade) 5%, transparent)}
+.badge{display:inline-block;padding:4px 10px;border-radius:99px;font-size:.75rem;font-weight:700}
+.badge-pray{background:color-mix(in srgb, var(--gold) 20%, transparent);color:var(--brass);border:1px solid var(--brass)}
+.badge-ok{background:color-mix(in srgb, var(--jade) 20%, transparent);color:var(--jade);border:1px solid var(--jade)}
+.modal-bg{position:fixed;inset:0;background:rgba(5,12,10,.6);z-index:20;display:flex;align-items:center;justify-content:center;padding:16px}
+.modal{background:var(--sf);border:1px solid var(--line);border-radius:20px;padding:26px;width:100%;max-width:500px;max-height:90vh;overflow-y:auto;box-shadow:0 10px 40px rgba(0,0,0,.25)}
+.modal h3{margin-bottom:12px;font-size:1.3rem}
+.row{display:flex;gap:8px;align-items:center;margin-top:12px}
+.err{color:#ef4444;font-size:.85rem;margin-top:8px;font-weight:600}
+.success{color:#10b981;font-size:.85rem;margin-top:8px;font-weight:600}
 </style>
 </head>
 <body>
@@ -54,6 +83,22 @@ let data = null;
 let modal = null;
 let msg = '';
 let msgType = 'success';
+
+// ── Theme Sync with Frontend ───────────────────────────────
+function initTheme() {
+  const saved = localStorage.getItem('gpdts_theme');
+  if (saved) {
+    document.documentElement.dataset.theme = saved;
+  }
+}
+function toggleTheme() {
+  const cur = document.documentElement.dataset.theme || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  const next = cur === 'dark' ? 'light' : 'dark';
+  document.documentElement.dataset.theme = next;
+  localStorage.setItem('gpdts_theme', next);
+  render();
+}
+initTheme();
 
 // ── Auth ───────────────────────────────────────────────────
 async function login(username, password) {
@@ -243,53 +288,58 @@ function render() {
 function renderLogin() {
   return `
     <div class="login-wrap">
-      <div class="card" style="width:100%;max-width:360px">
+      <div class="card" style="width:100%;max-width:380px">
         <h2>🔐 GPDTS Admin</h2>
+        <p style="color:var(--mute);font-size:.9rem;margin-bottom:12px">Sign in with your Director credentials to manage students and finances.</p>
         <form id="login-form">
           <label>Username</label>
-          <input id="username" type="text" autocomplete="username" required>
+          <input id="username" type="text" autocomplete="username" placeholder="Pheareak Training director" required>
           <label>Password</label>
-          <input id="password" type="password" autocomplete="current-password" required>
+          <input id="password" type="password" autocomplete="current-password" placeholder="••••••••" required>
           <div id="login-err" class="err"></div>
-          <button class="btn btn-gold" style="width:100%;margin-top:16px">Sign In</button>
+          <button class="btn btn-gold" style="width:100%;margin-top:20px;padding:10px">Sign In</button>
         </form>
       </div>
     </div>`;
 }
 
 function renderApp() {
-  if (!data) return '<div style="padding:40px;text-align:center;color:#9db3aa">Loading…</div>';
+  if (!data) return '<div style="padding:60px;text-align:center;color:var(--mute)">Loading admin panel…</div>';
   const { event, students } = data;
 
   const tabs = [
-    { id:'students', label:'Students' },
+    { id:'students', label:'👥 Students' },
     { id:'finances', label:'💰 Money & Fees' },
-    { id:'goals',    label:'Goals' },
-    { id:'event',    label:'Event Info' },
+    { id:'goals',    label:'🎯 Goals' },
+    { id:'event',    label:'ℹ️ Event Info' },
   ];
 
-  const msgHtml = msg ? `<p class="${msgType}" style="margin-bottom:12px">${msg}</p>` : '';
+  const msgHtml = msg ? `<p class="${msgType}" style="margin-bottom:14px">${msg}</p>` : '';
 
   let content = '';
 
   if (view === 'students') {
     content = `
       ${msgHtml}
-      <div style="display:flex;justify-content:flex-end;margin-bottom:12px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+        <div>
+          <h2 style="font-size:1.4rem">Students Roster</h2>
+          <span style="color:var(--mute);font-size:.85rem">${students.length} students enrolled in GPDTS 2026</span>
+        </div>
         <button class="btn btn-jade" onclick="modal='new';msg='';render()">+ Add Student</button>
       </div>
       <table>
         <thead><tr><th>Name</th><th>From</th><th>Gender</th><th>Born</th><th>Prayer</th><th>Actions</th></tr></thead>
         <tbody>
           ${students.map(s=>`<tr>
-            <td><strong>${s.name}</strong>${s.nick?` <span style="color:#9db3aa;font-size:.8rem">(${s.nick})</span>`:''}</td>
+            <td><strong>${s.name}</strong>${s.nick?` <span style="color:var(--mute);font-size:.8rem">(${s.nick})</span>`:''}</td>
             <td>${s.from_location||'—'}</td>
             <td>${s.gender||'—'}</td>
             <td>${s.born ? new Date(s.born).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) : '—'}</td>
             <td><span class="badge ${s.pray?'badge-pray':'badge-ok'}">${s.pray?'🙏 Needs prayer':'✓ Saved'}</span></td>
             <td>
-              <button class="btn btn-ghost" style="font-size:.8rem;padding:4px 10px;margin-right:4px" onclick='modal=${JSON.stringify(s)};msg="";render()'>Edit</button>
-              <button class="btn btn-danger" style="font-size:.8rem;padding:4px 10px" onclick="deleteStudent(${s.id},'${s.name.replace(/'/g,"\\'")}')">Delete</button>
+              <button class="btn btn-ghost" style="font-size:.8rem;padding:4px 12px;margin-right:6px" onclick='modal=${JSON.stringify(s)};msg="";render()'>Edit</button>
+              <button class="btn btn-danger" style="font-size:.8rem;padding:4px 12px" onclick="deleteStudent(${s.id},'${s.name.replace(/'/g,"\\'")}')">Delete</button>
             </td>
           </tr>`).join('')}
         </tbody>
@@ -312,18 +362,18 @@ function renderApp() {
     content = `
       ${msgHtml}
       <div style="display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));margin-bottom:20px">
-        <div class="card">
-          <h2 style="font-size:1.1rem">💵 Tuition Collected</h2>
-          <p style="font-size:1.8rem;font-weight:700;color:#2f7a63">$${totalPaid.toLocaleString()} <span style="font-size:.9rem;color:#9db3aa">/ $${totalDue.toLocaleString()}</span></p>
-          <div style="height:6px;background:#0b1a17;border-radius:99px;overflow:hidden;margin-top:8px">
-            <div style="width:${Math.min(100, Math.round((totalPaid/(totalDue||1))*100))}%;height:100%;background:#2f7a63"></div>
+        <div class="card" style="border-left:5px solid var(--jade)">
+          <h2 style="font-size:1.1rem;color:var(--jade)">💵 Tuition Collected</h2>
+          <p style="font-size:2rem;font-weight:800;color:var(--ink);font-family:'Bricolage Grotesque',sans-serif">$${totalPaid.toLocaleString()} <span style="font-size:.9rem;color:var(--mute)">/ $${totalDue.toLocaleString()}</span></p>
+          <div style="height:6px;background:var(--bg);border-radius:99px;overflow:hidden;margin-top:8px">
+            <div style="width:${Math.min(100, Math.round((totalPaid/(totalDue||1))*100))}%;height:100%;background:var(--jade)"></div>
           </div>
         </div>
-        <div class="card">
-          <h2 style="font-size:1.1rem">🌏 Outreach Budget Goal</h2>
-          <p style="font-size:1.8rem;font-weight:700;color:#e0ad55">$${budget.raised.toLocaleString()} <span style="font-size:.9rem;color:#9db3aa">/ $${budget.goal.toLocaleString()}</span></p>
-          <div style="height:6px;background:#0b1a17;border-radius99px;overflow:hidden;margin-top:8px">
-            <div style="width:${pct}%;height:100%;background:#e0ad55"></div>
+        <div class="card" style="border-left:5px solid var(--gold)">
+          <h2 style="font-size:1.1rem;color:var(--brass)">🌏 Outreach Budget Goal</h2>
+          <p style="font-size:2rem;font-weight:800;color:var(--ink);font-family:'Bricolage Grotesque',sans-serif">$${budget.raised.toLocaleString()} <span style="font-size:.9rem;color:var(--mute)">/ $${budget.goal.toLocaleString()}</span></p>
+          <div style="height:6px;background:var(--bg);border-radius:99px;overflow:hidden;margin-top:8px">
+            <div style="width:${pct}%;height:100%;background:var(--gold)"></div>
           </div>
         </div>
       </div>
@@ -374,7 +424,7 @@ function renderApp() {
 
       <div class="card">
         <h2>👥 Student Tuition Payment Tracker</h2>
-        <p style="color:#9db3aa;font-size:.85rem;margin-bottom:12px">Update tuition fees and recorded payments for each student. Only logged-in Admin can edit these values.</p>
+        <p style="color:var(--mute);font-size:.85rem;margin-bottom:12px">Update tuition fees and recorded payments for each student. Only logged-in Admin can edit these values.</p>
         <form id="student-fees-form">
           <table>
             <thead>
@@ -394,9 +444,9 @@ function renderApp() {
                 const isPaid = remaining === 0;
                 return `<tr>
                   <td><strong>${s.name}</strong>${s.nick ? ` (${s.nick})` : ''}</td>
-                  <td><input type="number" name="due_${s.id}" value="${due}" style="width:100px;padding:4px 8px"></td>
-                  <td><input type="number" name="paid_${s.id}" value="${paid}" style="width:100px;padding:4px 8px"></td>
-                  <td style="color:${isPaid ? '#4ade80' : '#f87171'};font-weight:700">$${remaining.toLocaleString()}</td>
+                  <td><input type="number" name="due_${s.id}" value="${due}" style="width:110px;padding:6px 10px"></td>
+                  <td><input type="number" name="paid_${s.id}" value="${paid}" style="width:110px;padding:6px 10px"></td>
+                  <td style="color:${isPaid ? 'var(--jade)' : 'var(--brass)'};font-weight:700">$${remaining.toLocaleString()}</td>
                   <td><span class="badge ${isPaid ? 'badge-ok' : 'badge-pray'}">${isPaid ? '✓ Paid in Full' : '⏳ Pending'}</span></td>
                 </tr>`;
               }).join('')}
@@ -430,12 +480,12 @@ function renderApp() {
       ${msgHtml}
       <div class="card">
         <h2>Event Info</h2>
-        <p style="color:#9db3aa;font-size:.9rem">Coming soon — edit event metadata here.</p>
-        <div style="margin-top:16px;padding:12px;border:1px solid #24413a;border-radius:8px">
+        <div style="margin-top:16px;padding:16px;border:1px solid var(--line);border-radius:12px;background:var(--bg)">
           <p><strong>Brand:</strong> ${m.brand}</p>
-          <p><strong>Kicker:</strong> ${m.kicker}</p>
-          <p><strong>Lede:</strong> ${m.lede}</p>
-          <p style="margin-top:8px"><strong>Prayer focus:</strong> ${p.title}</p>
+          <p style="margin-top:6px"><strong>Kicker:</strong> ${m.kicker}</p>
+          <p style="margin-top:6px"><strong>Lede:</strong> ${m.lede}</p>
+          <p style="margin-top:10px;color:var(--brass)"><strong>Prayer focus:</strong> ${p.title}</p>
+          <p style="margin-top:4px;color:var(--mute)">${p.text}</p>
         </div>
       </div>`;
   }
@@ -444,13 +494,14 @@ function renderApp() {
     <div class="bar">
       <h1>GPDTS Admin</h1>
       <span class="sp"></span>
-      <span style="color:#9db3aa;font-size:.85rem;margin-right:8px">${adminUser}</span>
-      <button class="btn btn-ghost" onclick="logout()">Sign out</button>
+      <button class="btn-pill" onclick="toggleTheme()">🌓 Theme</button>
+      <span style="color:var(--barink);font-size:.85rem;margin-left:8px;font-weight:600">${adminUser}</span>
+      <button class="btn-pill" onclick="logout()" style="margin-left:8px">Sign out</button>
     </div>
     <div class="main">
       <div class="tabs">${tabs.map(t=>`
         <button class="tab${view===t.id?' on':''}" onclick="view='${t.id}';msg='';render()">${t.label}</button>`).join('')}
-        <a href="/" target="_blank" class="tab" style="text-decoration:none">↗ View Site</a>
+        <a href="/" target="_blank" class="tab" style="text-decoration:none">↗ Public Site</a>
       </div>
       ${content}
     </div>`;
@@ -481,10 +532,10 @@ function renderStudentModal() {
           <label>Sort Order</label>
           <input name="sort_order" type="number" value="${s.sort_order||0}">
           <div class="row">
-            <input name="pray" type="checkbox" style="width:auto" ${s.pray?'checked':''}>
+            <input name="pray" type="checkbox" style="width:auto;accent-color:var(--gold)" ${s.pray?'checked':''}>
             <label style="margin:0">Needs prayer to know God</label>
           </div>
-          <div style="display:flex;gap:8px;margin-top:16px">
+          <div style="display:flex;gap:10px;margin-top:20px">
             <button class="btn btn-gold" type="submit">${isNew?'Add':'Save'}</button>
             <button class="btn btn-ghost" type="button" onclick="modal=null;render()">Cancel</button>
           </div>
