@@ -289,7 +289,7 @@ function renderLogin() {
   return `
     <div class="login-wrap">
       <div class="card" style="width:100%;max-width:380px">
-        <h2>🔐 GPDTS Admin</h2>
+        <h2>GPDTS Admin</h2>
         <p style="color:var(--mute);font-size:.9rem;margin-bottom:12px">Sign in with your Director credentials to manage students and finances.</p>
         <form id="login-form">
           <label>Username</label>
@@ -308,10 +308,10 @@ function renderApp() {
   const { event, students } = data;
 
   const tabs = [
-    { id:'students', label:'👥 Students' },
-    { id:'finances', label:'💰 Money & Fees' },
-    { id:'goals',    label:'🎯 Goals' },
-    { id:'event',    label:'ℹ️ Event Info' },
+    { id:'students', label:'Students' },
+    { id:'finances', label:'Money & Fees' },
+    { id:'goals',    label:'Goals' },
+    { id:'event',    label:'Event Info' },
   ];
 
   const msgHtml = msg ? `<p class="${msgType}" style="margin-bottom:14px">${msg}</p>` : '';
@@ -363,14 +363,14 @@ function renderApp() {
       ${msgHtml}
       <div style="display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));margin-bottom:20px">
         <div class="card" style="border-left:5px solid var(--jade)">
-          <h2 style="font-size:1.1rem;color:var(--jade)">💵 Tuition Collected</h2>
+          <h2 style="font-size:1.1rem;color:var(--jade)">Tuition Collected</h2>
           <p style="font-size:2rem;font-weight:800;color:var(--ink);font-family:'Bricolage Grotesque',sans-serif">$${totalPaid.toLocaleString()} <span style="font-size:.9rem;color:var(--mute)">/ $${totalDue.toLocaleString()}</span></p>
           <div style="height:6px;background:var(--bg);border-radius:99px;overflow:hidden;margin-top:8px">
             <div style="width:${Math.min(100, Math.round((totalPaid/(totalDue||1))*100))}%;height:100%;background:var(--jade)"></div>
           </div>
         </div>
         <div class="card" style="border-left:5px solid var(--gold)">
-          <h2 style="font-size:1.1rem;color:var(--brass)">🌏 Outreach Budget Goal</h2>
+          <h2 style="font-size:1.1rem;color:var(--brass)">Outreach Budget Goal</h2>
           <p style="font-size:2rem;font-weight:800;color:var(--ink);font-family:'Bricolage Grotesque',sans-serif">$${budget.raised.toLocaleString()} <span style="font-size:.9rem;color:var(--mute)">/ $${budget.goal.toLocaleString()}</span></p>
           <div style="height:6px;background:var(--bg);border-radius:99px;overflow:hidden;margin-top:8px">
             <div style="width:${pct}%;height:100%;background:var(--gold)"></div>
@@ -379,7 +379,7 @@ function renderApp() {
       </div>
 
       <div class="card" style="margin-bottom:20px">
-        <h2>💰 School Tuition & Bank Account Details</h2>
+        <h2>School Tuition & Bank Account Details</h2>
         <form id="fees-form">
           <div style="display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(180px,1fr))">
             <div>
@@ -406,7 +406,7 @@ function renderApp() {
       </div>
 
       <div class="card" style="margin-bottom:20px">
-        <h2>🌏 Outreach Mission Budget</h2>
+        <h2>Outreach Mission Budget</h2>
         <form id="budget-form">
           <div style="display:grid;gap:12px;grid-template-columns:1fr 1fr">
             <div>
@@ -423,7 +423,7 @@ function renderApp() {
       </div>
 
       <div class="card">
-        <h2>👥 Student Tuition Payment Tracker</h2>
+        <h2>Student Tuition Payment Tracker</h2>
         <p style="color:var(--mute);font-size:.85rem;margin-bottom:12px">Update tuition fees and recorded payments for each student. Only logged-in Admin can edit these values.</p>
         <form id="student-fees-form">
           <table>
@@ -494,14 +494,14 @@ function renderApp() {
     <div class="bar">
       <h1>GPDTS Admin</h1>
       <span class="sp"></span>
-      <button class="btn-pill" onclick="toggleTheme()">🌓 Theme</button>
+      <button class="btn-pill" onclick="toggleTheme()">Theme</button>
       <span style="color:var(--barink);font-size:.85rem;margin-left:8px;font-weight:600">${adminUser}</span>
       <button class="btn-pill" onclick="logout()" style="margin-left:8px">Sign out</button>
     </div>
     <div class="main">
       <div class="tabs">${tabs.map(t=>`
         <button class="tab${view===t.id?' on':''}" onclick="view='${t.id}';msg='';render()">${t.label}</button>`).join('')}
-        <a href="/" target="_blank" class="tab" style="text-decoration:none">↗ Public Site</a>
+        <a href="/" target="_blank" class="tab" style="text-decoration:none">Public Site</a>
       </div>
       ${content}
     </div>`;
