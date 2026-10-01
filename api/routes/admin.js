@@ -169,4 +169,54 @@ router.put('/pillars', requireAuth, async (req, res) => {
   }
 });
 
+// GET /api/admin/finances - get all financial data
+router.get('/finances', requireAuth, async (req, res) => {
+  try {
+    const { data: students } = await supabase.from('students').select('id, name, fee_due, fee_paid').order('sort_order');
+    res.json({
+      fees: {
+        lecture: 1200,
+        outreach: 1800,
+        currency: "USD",
+        account: "000 123 456 (ABA Bank)",
+        accountName: "GPDTS Poipet Ministry",
+        note: "Tuition covers accommodation, meals, and discipleship materials for 6 months."
+      },
+      budget: {
+        goal: 15000,
+        raised: 6850,
+        currency: "USD"
+      },
+      students: students || []
+    });
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to load finances' });
+  }
+});
+
+// PUT /api/admin/finances - Admin FULL PERMISSION to change money
+router.put('/finances', requireAuth, async (req, res) => {
+  const { fees, budget, student_payments } = req.body;
+  try {
+    // If student payments are passed, update each student's fee and paid amounts
+    if (student_payments && Array.isArray(student_payments)) {
+      for (const sp of student_payments) {
+        await supabase.from('students').update({
+          fee_due: sp.fee_due,
+          fee_paid: sp.fee_paid
+        }).eq('id', sp.id);
+      }
+    }
+    res.json({
+      success: true,
+      message: 'Financial records updated successfully',
+      fees,
+      budget
+    });
+  } catch (err) {
+    console.error('Update finances error:', err);
+    res.status(500).json({ error: 'Failed to update finances' });
+  }
+});
+
 module.exports = router;

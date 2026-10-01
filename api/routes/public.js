@@ -1,13 +1,11 @@
 // ============================================================
-// GPDTS 2026 - Public API Routes
-// GET /api/event   → full event data (students, goals, pillars)
-// GET /api/students
+// GPDTS 2026 - Public API Routes (READ ONLY FOR PUBLIC)
 // ============================================================
 const express = require('express');
 const router = express.Router();
 const supabase = require('../lib/supabase');
 
-// Default fallback data (matches seed)
+// Default fallback data with financial fees & budget
 const DEFAULT_DATA = {
   meta: {
     brand: "GPDTS 2026",
@@ -38,18 +36,31 @@ const DEFAULT_DATA = {
       "7 students take part in Discovery Bible Study"
     ]
   },
+  fees: {
+    lecture: 1200,
+    outreach: 1800,
+    currency: "USD",
+    account: "000 123 456 (ABA Bank)",
+    accountName: "GPDTS Poipet Ministry",
+    note: "Tuition covers accommodation, meals, and discipleship materials for 6 months."
+  },
+  budget: {
+    goal: 15000,
+    raised: 6850,
+    currency: "USD"
+  },
   students: [
-    { id: 1, name: "Josha Thoreson", nick: null, from: "Canada", born: "2008-02-29", gender: "Male", pray: false, photo: null },
-    { id: 2, name: "Chea SreyPich", nick: "Srey Pich", from: "Poipet", born: "2008-11-09", gender: "Female", pray: true, photo: null },
-    { id: 3, name: "Sanh PeyPey", nick: null, from: "Oddar Meanchey", born: "2005-03-26", gender: "Female", pray: false, photo: null },
-    { id: 4, name: "Ny Punleu", nick: null, from: "Tbong Khmum", born: "2008-12-12", gender: "Female", pray: false, photo: null },
-    { id: 5, name: "Soum Chanthy", nick: "Chanthy", from: "Poipet", born: "2007-07-16", gender: "Female", pray: true, photo: null },
-    { id: 6, name: "Leng Leehour", nick: "Leehour", from: "Poipet", born: "2007-06-08", gender: "Female", pray: true, photo: null },
-    { id: 7, name: "Sok Sokhom", nick: null, from: "Phnom Penh", born: "1997-08-21", gender: "Male", pray: false, photo: null }
+    { id: 1, name: "Josha Thoreson", nick: null, from: "Canada", born: "2008-02-29", gender: "Male", pray: false, photo: null, fee_due: 3000, fee_paid: 3000 },
+    { id: 2, name: "Chea SreyPich", nick: "Srey Pich", from: "Poipet", born: "2008-11-09", gender: "Female", pray: true, photo: null, fee_due: 1500, fee_paid: 800 },
+    { id: 3, name: "Sanh PeyPey", nick: null, from: "Oddar Meanchey", born: "2005-03-26", gender: "Female", pray: false, photo: null, fee_due: 1500, fee_paid: 1500 },
+    { id: 4, name: "Ny Punleu", nick: null, from: "Tbong Khmum", born: "2008-12-12", gender: "Female", pray: false, photo: null, fee_due: 1500, fee_paid: 500 },
+    { id: 5, name: "Soum Chanthy", nick: "Chanthy", from: "Poipet", born: "2007-07-16", gender: "Female", pray: true, photo: null, fee_due: 1500, fee_paid: 1200 },
+    { id: 6, name: "Leng Leehour", nick: "Leehour", from: "Poipet", born: "2007-06-08", gender: "Female", pray: true, photo: null, fee_due: 1500, fee_paid: 1500 },
+    { id: 7, name: "Sok Sokhom", nick: null, from: "Phnom Penh", born: "1997-08-21", gender: "Male", pray: false, photo: null, fee_due: 2000, fee_paid: 2000 }
   ]
 };
 
-// GET /api/event - full event bundle
+// GET /api/event - full event bundle (Public View - Read Only)
 router.get('/event', async (req, res) => {
   try {
     if (!process.env.SUPABASE_URL || !process.env.SUPABASE_SERVICE_KEY) {
@@ -91,6 +102,8 @@ router.get('/event', async (req, res) => {
         outreach: outreachGoals.length ? outreachGoals : DEFAULT_DATA.goals.outreach,
         classroom: classroomGoals.length ? classroomGoals : DEFAULT_DATA.goals.classroom,
       },
+      fees: DEFAULT_DATA.fees,
+      budget: DEFAULT_DATA.budget,
       students: (students.data || []).map(s => ({
         id: s.id,
         name: s.name,
@@ -100,12 +113,22 @@ router.get('/event', async (req, res) => {
         gender: s.gender,
         pray: s.pray,
         photo: s.photo_url || null,
+        fee_due: s.fee_due || 1500,
+        fee_paid: s.fee_paid || 0,
       })),
     });
   } catch (err) {
     console.warn('Falling back to default event data:', err.message);
     res.json(DEFAULT_DATA);
   }
+});
+
+// GET /api/finances - Public Read-Only Finances
+router.get('/finances', (req, res) => {
+  res.json({
+    fees: DEFAULT_DATA.fees,
+    budget: DEFAULT_DATA.budget
+  });
 });
 
 // GET /api/students

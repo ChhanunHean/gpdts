@@ -149,6 +149,67 @@ async function saveGoals(form) {
   }
 }
 
+// ── Finances CRUD (Admin Full Permission) ───────────────────
+async function saveFees(form) {
+  const fees = {
+    lecture: Number(form.lecture.value),
+    outreach: Number(form.outreach.value),
+    currency: form.currency.value.trim(),
+    account: form.account.value.trim(),
+    accountName: form.accountName.value.trim(),
+    note: form.note.value.trim()
+  };
+  try {
+    await api('PUT', '/finances', { fees });
+    if (!data.event.fees) data.event.fees = {};
+    Object.assign(data.event.fees, fees);
+    msg = 'School fees & payment details updated!'; msgType = 'success';
+    render();
+  } catch(e) {
+    msg = e.message; msgType = 'err'; render();
+  }
+}
+
+async function saveBudget(form) {
+  const budget = {
+    goal: Number(form.goal.value),
+    raised: Number(form.raised.value),
+    currency: 'USD'
+  };
+  try {
+    await api('PUT', '/finances', { budget });
+    if (!data.event.budget) data.event.budget = {};
+    Object.assign(data.event.budget, budget);
+    msg = 'Outreach mission budget updated!'; msgType = 'success';
+    render();
+  } catch(e) {
+    msg = e.message; msgType = 'err'; render();
+  }
+}
+
+async function saveStudentFees(form) {
+  const student_payments = data.students.map(s => {
+    const dueInput = form.querySelector(`input[name="due_${s.id}"]`);
+    const paidInput = form.querySelector(`input[name="paid_${s.id}"]`);
+    return {
+      id: s.id,
+      fee_due: dueInput ? Number(dueInput.value) : s.fee_due,
+      fee_paid: paidInput ? Number(paidInput.value) : s.fee_paid
+    };
+  });
+  try {
+    await api('PUT', '/finances', { student_payments });
+    student_payments.forEach(sp => {
+      const match = data.students.find(s => s.id === sp.id);
+      if (match) { match.fee_due = sp.fee_due; match.fee_paid = sp.fee_paid; }
+    });
+    msg = 'Student tuition and payments saved!'; msgType = 'success';
+    render();
+  } catch(e) {
+    msg = e.message; msgType = 'err'; render();
+  }
+}
+
 // ── Render ─────────────────────────────────────────────────
 function render() {
   document.getElementById('root').innerHTML = token ? renderApp() : renderLogin();
@@ -168,6 +229,15 @@ function render() {
 
   const gf = document.getElementById('goals-form');
   if (gf) gf.onsubmit = e => { e.preventDefault(); saveGoals(gf); };
+
+  const ff = document.getElementById('fees-form');
+  if (ff) ff.onsubmit = e => { e.preventDefault(); saveFees(ff); };
+
+  const bf = document.getElementById('budget-form');
+  if (bf) bf.onsubmit = e => { e.preventDefault(); saveBudget(bf); };
+
+  const stf = document.getElementById('student-fees-form');
+  if (stf) stf.onsubmit = e => { e.preventDefault(); saveStudentFees(stf); };
 }
 
 function renderLogin() {
@@ -193,6 +263,7 @@ function renderApp() {
 
   const tabs = [
     { id:'students', label:'Students' },
+    { id:'finances', label:'💰 Money & Fees' },
     { id:'goals',    label:'Goals' },
     { id:'event',    label:'Event Info' },
   ];
@@ -224,6 +295,116 @@ function renderApp() {
         </tbody>
       </table>
       ${renderStudentModal()}`;
+  }
+
+  if (view === 'finances') {
+    const fees = data.event.fees || { lecture: 1200, outreach: 1800, currency: 'USD', account: '000 123 456 (ABA Bank)', accountName: 'GPDTS Poipet Ministry', note: '' };
+    const budget = data.event.budget || { goal: 15000, raised: 6850, currency: 'USD' };
+    const pct = Math.min(100, Math.round((budget.raised / (budget.goal || 1)) * 100));
+
+    // Calculate student payment totals
+    let totalDue = 0, totalPaid = 0;
+    students.forEach(s => {
+      totalDue += (Number(s.fee_due) || 1500);
+      totalPaid += (Number(s.fee_paid) || 0);
+    });
+
+    content = `
+      ${msgHtml}
+      <div style="display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));margin-bottom:20px">
+        <div class="card">
+          <h2 style="font-size:1.1rem">💵 Tuition Collected</h2>
+          <p style="font-size:1.8rem;font-weight:700;color:#2f7a63">$${totalPaid.toLocaleString()} <span style="font-size:.9rem;color:#9db3aa">/ $${totalDue.toLocaleString()}</span></p>
+          <div style="height:6px;background:#0b1a17;border-radius:99px;overflow:hidden;margin-top:8px">
+            <div style="width:${Math.min(100, Math.round((totalPaid/(totalDue||1))*100))}%;height:100%;background:#2f7a63"></div>
+          </div>
+        </div>
+        <div class="card">
+          <h2 style="font-size:1.1rem">🌏 Outreach Budget Goal</h2>
+          <p style="font-size:1.8rem;font-weight:700;color:#e0ad55">$${budget.raised.toLocaleString()} <span style="font-size:.9rem;color:#9db3aa">/ $${budget.goal.toLocaleString()}</span></p>
+          <div style="height:6px;background:#0b1a17;border-radius99px;overflow:hidden;margin-top:8px">
+            <div style="width:${pct}%;height:100%;background:#e0ad55"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-bottom:20px">
+        <h2>💰 School Tuition & Bank Account Details</h2>
+        <form id="fees-form">
+          <div style="display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(180px,1fr))">
+            <div>
+              <label>Lecture Phase Fee ($)</label>
+              <input name="lecture" type="number" value="${fees.lecture}" required>
+            </div>
+            <div>
+              <label>Outreach Phase Fee ($)</label>
+              <input name="outreach" type="number" value="${fees.outreach}" required>
+            </div>
+            <div>
+              <label>Currency</label>
+              <input name="currency" value="${fees.currency || 'USD'}" required>
+            </div>
+          </div>
+          <label>Bank Account / ABA Number</label>
+          <input name="account" value="${fees.account || ''}" placeholder="e.g. 000 123 456 (ABA Bank)">
+          <label>Account Holder Name</label>
+          <input name="accountName" value="${fees.accountName || ''}" placeholder="e.g. GPDTS Poipet Ministry">
+          <label>Payment Instructions / Notes</label>
+          <textarea name="note" rows="2">${fees.note || ''}</textarea>
+          <button class="btn btn-gold" style="margin-top:16px">Update School Fees & Bank Info</button>
+        </form>
+      </div>
+
+      <div class="card" style="margin-bottom:20px">
+        <h2>🌏 Outreach Mission Budget</h2>
+        <form id="budget-form">
+          <div style="display:grid;gap:12px;grid-template-columns:1fr 1fr">
+            <div>
+              <label>Total Budget Target ($)</label>
+              <input name="goal" type="number" value="${budget.goal}" required>
+            </div>
+            <div>
+              <label>Total Amount Raised ($)</label>
+              <input name="raised" type="number" value="${budget.raised}" required>
+            </div>
+          </div>
+          <button class="btn btn-gold" style="margin-top:16px">Update Outreach Budget</button>
+        </form>
+      </div>
+
+      <div class="card">
+        <h2>👥 Student Tuition Payment Tracker</h2>
+        <p style="color:#9db3aa;font-size:.85rem;margin-bottom:12px">Update tuition fees and recorded payments for each student. Only logged-in Admin can edit these values.</p>
+        <form id="student-fees-form">
+          <table>
+            <thead>
+              <tr>
+                <th>Student</th>
+                <th>Fee Due ($)</th>
+                <th>Amount Paid ($)</th>
+                <th>Balance Remaining</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${students.map((s, idx) => {
+                const due = Number(s.fee_due) || 1500;
+                const paid = Number(s.fee_paid) || 0;
+                const remaining = Math.max(0, due - paid);
+                const isPaid = remaining === 0;
+                return `<tr>
+                  <td><strong>${s.name}</strong>${s.nick ? ` (${s.nick})` : ''}</td>
+                  <td><input type="number" name="due_${s.id}" value="${due}" style="width:100px;padding:4px 8px"></td>
+                  <td><input type="number" name="paid_${s.id}" value="${paid}" style="width:100px;padding:4px 8px"></td>
+                  <td style="color:${isPaid ? '#4ade80' : '#f87171'};font-weight:700">$${remaining.toLocaleString()}</td>
+                  <td><span class="badge ${isPaid ? 'badge-ok' : 'badge-pray'}">${isPaid ? '✓ Paid in Full' : '⏳ Pending'}</span></td>
+                </tr>`;
+              }).join('')}
+            </tbody>
+          </table>
+          <button class="btn btn-jade" style="margin-top:16px">Save All Student Payments</button>
+        </form>
+      </div>`;
   }
 
   if (view === 'goals') {
