@@ -199,7 +199,7 @@ if(!VIEWS[S.tab])S.tab='home';
 render();
 (async()=>{
   try{
-    const res = await fetch('/api/data');
+    const res = await fetch('/api/data?t=' + Date.now(), { cache: 'no-store' });
     if(res.ok){
       const live = await res.json();
       if(live && live.students){
