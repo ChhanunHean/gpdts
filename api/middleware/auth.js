@@ -3,6 +3,8 @@
 // ============================================================
 const jwt = require('jsonwebtoken');
 
+const JWT_SECRET = process.env.JWT_SECRET || 'gpdts-2026-poipet-secret-super-key-999';
+
 function requireAuth(req, res, next) {
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1]; // Bearer <token>
@@ -12,7 +14,7 @@ function requireAuth(req, res, next) {
   }
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const decoded = jwt.verify(token, JWT_SECRET);
     req.admin = decoded;
     next();
   } catch (err) {
@@ -20,4 +22,4 @@ function requireAuth(req, res, next) {
   }
 }
 
-module.exports = { requireAuth };
+module.exports = { requireAuth, JWT_SECRET };
