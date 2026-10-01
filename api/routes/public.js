@@ -4,6 +4,14 @@
 const express = require('express');
 const router = express.Router();
 const supabase = require('../lib/supabase');
+const { getData } = require('../lib/store');
+
+// GET /api/data - Full live event state (students, photos, schedule, fees, etc.)
+router.get('/data', (req, res) => {
+  const d = getData();
+  if (d) return res.json(d);
+  res.status(500).json({ error: 'Data not available' });
+});
 
 // Default fallback data with financial fees & budget
 const DEFAULT_DATA = {

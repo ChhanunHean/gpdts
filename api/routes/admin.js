@@ -14,6 +14,17 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const supabase = require('../lib/supabase');
 const { requireAuth, JWT_SECRET } = require('../middleware/auth');
+const { saveData, getData } = require('../lib/store');
+
+// PUT /api/admin/save-data - Save complete state from inline Admin Editor
+router.put('/save-data', requireAuth, (req, res) => {
+  const incoming = req.body;
+  if (!incoming || !incoming.meta) {
+    return res.status(400).json({ error: 'Invalid data format' });
+  }
+  saveData(incoming);
+  res.json({ success: true, message: 'Changes published successfully' });
+});
 
 // POST /api/admin/login
 router.post('/login', async (req, res) => {

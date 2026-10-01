@@ -197,7 +197,18 @@ addEventListener('keydown',e=>{if(e.key==='Escape'&&S.open!=null){S.open=null;re
 try{S.lang=localStorage.getItem('gpdts_lang')==='km'?'km':'en';S.tab=localStorage.getItem('gpdts_tab')||'home';const th=localStorage.getItem('gpdts_theme');if(th)document.documentElement.dataset.theme=th}catch(e){}
 if(!VIEWS[S.tab])S.tab='home';
 render();
-(async()=>{try{const c=window.claude;if(!c)return;const u=await c.use('user');ART=await c.use('artifact');S.can=!!(ART&&u&&u.canEdit&&u.canEdit());if(S.can)render()}catch(e){}})();
+(async()=>{
+  try{
+    const res = await fetch('/api/data');
+    if(res.ok){
+      const live = await res.json();
+      if(live && live.students){
+        Object.assign(D, live);
+        render();
+      }
+    }
+  }catch(e){}
+})();
 </script>
 
 
