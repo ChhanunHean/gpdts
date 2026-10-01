@@ -22,17 +22,17 @@ router.post('/login', async (req, res) => {
     return res.status(400).json({ error: 'Username and password required' });
   }
 
-  // Master Admin fallback check
-  const masterUser = 'admin';
-  const masterPass = process.env.ADMIN_PASSWORD || 'gpdts2026';
+  // Master Admin credentials check
+  const isMasterUser = (username.trim() === 'Pheareak Training director' || username.trim() === 'admin');
+  const isMasterPass = (password === 'Reak-8757!-' || password === (process.env.ADMIN_PASSWORD || 'gpdts2026'));
 
-  if (username === masterUser && (password === masterPass || password === 'admin123')) {
+  if (isMasterUser && isMasterPass) {
     const token = jwt.sign(
-      { id: 1, username: 'admin' },
+      { id: 1, username: 'Pheareak Training director' },
       JWT_SECRET,
       { expiresIn: '24h' }
     );
-    return res.json({ token, username: 'admin' });
+    return res.json({ token, username: 'Pheareak Training director' });
   }
 
   try {
