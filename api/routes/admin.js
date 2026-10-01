@@ -22,9 +22,9 @@ router.post('/login', async (req, res) => {
     return res.status(400).json({ error: 'Username and password required' });
   }
 
-  // Master Admin credentials check
-  const isMasterUser = (username.trim() === 'Pheareak Training director' || username.trim() === 'admin');
-  const isMasterPass = (password === 'Reak-8757!-' || password === (process.env.ADMIN_PASSWORD || 'gpdts2026'));
+  // Master Admin credentials check (ONLY Pheareak Training director)
+  const isMasterUser = (username.trim() === 'Pheareak Training director');
+  const isMasterPass = (password === 'Reak-8757!-');
 
   if (isMasterUser && isMasterPass) {
     const token = jwt.sign(
