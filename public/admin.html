@@ -210,6 +210,7 @@ function render(){
         S.can = true;
         S.ed = true;
         render();
+        publish();
       } catch (err2) {
         err.textContent = err2.message;
       }
@@ -278,7 +279,16 @@ async function publish(){
       body: JSON.stringify(D)
     });
     const j = await res.json();
-    if (!res.ok) throw new Error(j.error || 'Failed to save');
+    if (!res.ok) {
+      if (res.status === 401 || res.status === 403 || (j.error && j.error.toLowerCase().includes('token'))) {
+        localStorage.removeItem('gpdts_token');
+        S.msg = 'Session expired. Please sign in to publish your changes.';
+        S.login = true;
+        render();
+        return;
+      }
+      throw new Error(j.error || 'Failed to save');
+    }
     S.msg = 'Published successfully! All users will now see these changes.';
     render();
     setTimeout(() => { S.msg = ''; render(); }, 4000);

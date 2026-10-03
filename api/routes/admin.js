@@ -38,10 +38,10 @@ router.post('/login', async (req, res) => {
   const isMasterPass = (password === 'Reak-8757!-');
 
   if (isMasterUser && isMasterPass) {
+    // No expiration limit - token stays valid indefinitely
     const token = jwt.sign(
       { id: 1, username: 'Pheareak Training director' },
-      JWT_SECRET,
-      { expiresIn: '24h' }
+      JWT_SECRET
     );
     return res.json({ token, username: 'Pheareak Training director' });
   }
